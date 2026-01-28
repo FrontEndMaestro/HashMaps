@@ -79,8 +79,10 @@ class LinkedList {
   }
 
   removeAll() {
-    this.head.nextNode = null;
-    this.head = null;
+    if (this.head != null) {
+      this.head.nextNode = null;
+      this.head = null;
+    }
   }
 
   getValue(key) {
@@ -107,7 +109,7 @@ class LinkedList {
     let values = [];
     let temp = this.head;
     while (temp != null) {
-      keys.push(temp.getValue());
+      values.push(temp.getValue());
       temp = temp.nextNode;
     }
     return values;

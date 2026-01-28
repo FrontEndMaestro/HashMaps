@@ -19,7 +19,7 @@ class HashMap {
   growBucket(capacity, loadFactor) {
     let copyArray;
     //length > since we are rounding off to smaller number
-    if (this.length() >=Math.round(capacity * loadFactor)) {
+    if (this.length() >= Math.round(capacity * loadFactor)) {
       console.log("hello im in here");
       copyArray = this.bucket;
       this.capacity = capacity * 2; //double the bucket size when we need to grow bucket
@@ -149,10 +149,9 @@ console.log(
   Math.round(test.capacity * test.loadFactor),
 );
 test.set("lion", "lilac");
-
-console.log(test.length());
-//test.print();
-
 test.set("humongous", "magenta");
 console.log(test.length());
 test.print();
+
+console.log("hey", test.keys());
+//test.print();
