@@ -4,54 +4,52 @@ class HashMap {
   constructor(loadFactor, capacity) {
     this.loadFactor = loadFactor;
     this.capacity = capacity;
-    this.bs = this.bucketSize(this.capacity);
+    this.bucket = this.populateBucket(this.capacity);
   }
 
-  bucketSize(capacity) {
-    let bs = [];
+  populateBucket(capacity) {
+    let bucket = [];
     for (let i = 0; i < capacity; i++) {
       let link = new LinkedList();
-      bs.push(link);
+      bucket.push(link);
     }
-    return bs;
+    return bucket;
   }
 
   growBucket(capacity, loadFactor) {
     let copyArray;
-    let numOfEntries = Math.round(capacity * loadFactor);
-    if (numOfEntries == this.length()) {
-      copyArray = this.bs;
-      this.capacity = capacity * 2;
-      this.bs = this.bucketSize(this.capacity);
-      for (let i = 0; i < copyArray.length; i++) {
-        this.passKeysToHash(copyArray);
-        let linklist = copyArray[i];
-        this.bs[i] = copyArray[i];
-      }
-      //this.bs = this.bucketSize(capacity * 2);
+    //length > since we are rounding off to smaller number
+    if (this.length() >=Math.round(capacity * loadFactor)) {
+      console.log("hello im in here");
+      copyArray = this.bucket;
+      this.capacity = capacity * 2; //double the bucket size when we need to grow bucket
+      this.bucket = this.populateBucket(this.capacity);
+      this.hashKeysAgain(copyArray);
     }
-    //console.log(copyArray[1].toString());
   }
 
-  passKeysToHash(copyArray) {
-    let allEntries = getAllEntries(copyArray);
-    console.log(allEntries);
+  hashKeysAgain(copyArray) {
+    let allEntries = this.entries(copyArray);
+    allEntries.forEach((element) => {
+      this.set(element[0], element[1]);
+    });
   }
 
   hash(key) {
     let hashCode = 0;
-
-    const primeNumber = 31;
+    const primeNumber = 31; //not divisible by even numbers so minimizes collisions
     for (let i = 0; i < key.length; i++) {
       hashCode = primeNumber * hashCode + key.charCodeAt(i);
-      hashCode = hashCode % this.capacity;
+      hashCode = hashCode % this.capacity; //placing this inside the for loop avoids interger overflow for large keys
     }
-    //hashCode = hashCode % this.bs.length;
     return hashCode;
   }
 
   set(key, value) {
-    let linkList = this.bs[this.hash(key)];
+    this.growBucket(this.capacity, this.loadFactor);
+    let index = this.hash(key);
+    this.outOfBoundError(index);
+    let linkList = this.bucket[index];
     if (linkList.updateValue(key, value)) {
     } else {
       linkList.append(key, value);
@@ -59,53 +57,59 @@ class HashMap {
   }
 
   get(key) {
-    let linkList = this.bs[this.hash(key)];
+    let index = this.hash(key);
+    this.outOfBoundError(index);
+    let linkList = this.bucket[index];
     return linkList.getValue(key);
   }
 
   has(key) {
-    let linkList = this.bs[this.hash(key)];
+    let index = this.hash(key);
+    this.outOfBoundError(index);
+    let linkList = this.bucket[index];
     linkList.contains(key);
   }
 
   remove(key) {
-    let linkList = this.bs[this.hash(key)];
+    let index = this.hash(key);
+    this.outOfBoundError(index);
+    let linkList = this.bucket[index];
     linkList.remove(key);
   }
 
   length() {
     let count = 0;
-    for (let i = 0; i < this.bs.length; i++) {
-      let linkList = this.bs[i];
+    for (let i = 0; i < this.bucket.length; i++) {
+      let linkList = this.bucket[i];
       count += linkList.size();
     }
     return count;
   }
   clear() {
-    for (let i = 0; i < this.bs.length; i++) {
-      this.bs[i].removeAll();
+    for (let i = 0; i < this.bucket.length; i++) {
+      this.bucket[i].removeAll();
     }
   }
   keys() {
     let keys = [];
-    for (let i = 0; i < this.bs.length; i++) {
-      keys.push(...this.bs[i].getAllKeys());
+    for (let i = 0; i < this.bucket.length; i++) {
+      keys.push(...this.bucket[i].getAllKeys());
     }
     return keys;
   }
   values() {
     let values = [];
-    for (let i = 0; i < this.bs.length; i++) {
-      values.push(...this.bs[i].getAllValues());
+    for (let i = 0; i < this.bucket.length; i++) {
+      values.push(...this.bucket[i].getAllValues());
     }
     return values;
   }
 
-  entries() {
+  entries(bucket) {
     let entries = [];
-    for (let i = 0; i < this.bs.length; i++) {
-      let linkedlist = this.bs[i].getAllEntries();
-      if (linkedlist.head != null) {
+    for (let i = 0; i < bucket.length; i++) {
+      let linkedlist = bucket[i].getAllEntries();
+      if (linkedlist != "") {
         entries.push(...linkedlist);
       }
     }
@@ -113,8 +117,14 @@ class HashMap {
   }
 
   print() {
-    for (let i = 0; i < this.bs.length; i++) {
-      console.log(`[${this.bs[i].toString()}]\n`);
+    for (let i = 0; i < this.bucket.length; i++) {
+      console.log(`[${this.bucket[i].printLinkedList()}]\n`);
+    }
+  }
+
+  outOfBoundError(index) {
+    if (index < 0 || index >= this.bucket.length) {
+      throw new Error("Trying to access index out of bounds");
     }
   }
 }
@@ -132,9 +142,17 @@ test.set("ice cream", "white");
 test.set("jacket", "blue");
 test.set("kite", "pink");
 test.set("lion", "golden");
-test.print();
-//console.log(test.bs);
 
 console.log(test.length());
-test.growBucket(test.capacity, test.loadFactor);
+console.log(
+  "num of entires when we need to grow bucket",
+  Math.round(test.capacity * test.loadFactor),
+);
+test.set("lion", "lilac");
+
+console.log(test.length());
+//test.print();
+
+test.set("humongous", "magenta");
+console.log(test.length());
 test.print();

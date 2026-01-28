@@ -3,7 +3,7 @@ class LinkedList {
     this.head = null;
   }
   append(key, value) {
-    let node = nodeClass();
+    let node = nodeFactory();
     node.setValue(value);
     node.setKey(key);
     if (this.head == null) {
@@ -20,6 +20,7 @@ class LinkedList {
     if (this.head == null) return "";
     let temp = this.head;
     while (temp != null) {
+      //print without line break
       process.stdout.write(
         `[key: ${temp.getkey()},value: ${temp.getValue()}]->`,
       );
@@ -38,26 +39,6 @@ class LinkedList {
       count++;
     }
     return count;
-  }
-
-  at(index) {
-    let count = 0;
-    let temp = this.head;
-    while (temp != null) {
-      if (count == index) return temp.getValue();
-      temp = temp.nextNode;
-      count++;
-    }
-    return undefined;
-  }
-
-  pop() {
-    if (this.head == null) return undefined;
-    let temp = this.head.nextNode;
-    let value = this.head.getValue();
-    this.head.nextNode = null;
-    this.head = temp;
-    return value;
   }
 
   updateValue(key, value) {
@@ -142,7 +123,7 @@ class LinkedList {
     return entries;
   }
 
-  toString() {
+  printLinkedList() {
     if (this.head == null) return "";
     let string = " ";
     let temp = this.head;
@@ -155,13 +136,9 @@ class LinkedList {
       temp = temp.nextNode;
     }
   }
-
-  throwError(index) {
-    if (index < 0 || index > this.size()) throw new RangeError("Out of bounds");
-  }
 }
 
-function nodeClass() {
+function nodeFactory() {
   let value, nextNode, key;
   value = nextNode = key = null;
   function getValue() {
