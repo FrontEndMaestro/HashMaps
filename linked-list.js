@@ -31,7 +31,7 @@ class LinkedList {
     }
   }
 
-  size() {
+  numOfNodes() {
     let temp = this.head;
     let count = 0;
     while (temp != null) {
@@ -74,7 +74,6 @@ class LinkedList {
     while (temp != null) {
       if (key == temp.getkey()) {
         prev.nextNode = temp.nextNode;
-        temp.nextNode = null;
         return true;
       }
       prev = temp;

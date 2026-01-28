@@ -9,7 +9,6 @@ class HashMap {
 
   populateBucket(capacity) {
     let bucket = [];
-
     for (let i = 0; i < capacity; i++) {
       let link = new LinkedList();
       bucket.push(link);
@@ -21,7 +20,6 @@ class HashMap {
     let copyArray;
     //length > since we are rounding off to smaller number
     if (this.length() >= Math.round(capacity * loadFactor)) {
-      console.log("hello im in here");
       copyArray = this.bucket;
       this.capacity = capacity * 2; //double the bucket size when we need to grow bucket
       this.bucket = this.populateBucket(this.capacity);
@@ -37,11 +35,6 @@ class HashMap {
         current = current.nextNode;
       }
     }
-
-    /*let allEntries = this.entries(copyArray);
-    allEntries.forEach((element) => {
-      this.set(element[0], element[1]);
-    });*/
   }
 
   hash(key) {
@@ -76,7 +69,7 @@ class HashMap {
     let index = this.hash(key);
     this.outOfBoundError(index);
     let linkList = this.bucket[index];
-    linkList.contains(key);
+    return linkList.contains(key);
   }
 
   remove(key) {
@@ -90,7 +83,7 @@ class HashMap {
     let count = 0;
     for (let i = 0; i < this.bucket.length; i++) {
       let linkList = this.bucket[i];
-      count += linkList.size();
+      count += linkList.numOfNodes();
     }
     return count;
   }
