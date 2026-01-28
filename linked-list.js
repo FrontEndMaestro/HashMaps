@@ -66,11 +66,16 @@ class LinkedList {
 
   remove(key) {
     let temp = this.head;
+    if (key == this.head.getkey()) {
+      this.head = this.head.nextNode;
+      return true;
+    }
     let prev = null;
     while (temp != null) {
       if (key == temp.getkey()) {
         prev.nextNode = temp.nextNode;
         temp.nextNode = null;
+        return true;
       }
       prev = temp;
       temp = temp.nextNode;

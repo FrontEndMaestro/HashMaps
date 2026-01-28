@@ -9,6 +9,7 @@ class HashMap {
 
   populateBucket(capacity) {
     let bucket = [];
+
     for (let i = 0; i < capacity; i++) {
       let link = new LinkedList();
       bucket.push(link);
@@ -29,10 +30,18 @@ class HashMap {
   }
 
   hashKeysAgain(copyArray) {
-    let allEntries = this.entries(copyArray);
+    for (const linkedlist of copyArray) {
+      let current = linkedlist.head;
+      while (current != null) {
+        this.set(current.getkey(), current.getValue());
+        current = current.nextNode;
+      }
+    }
+
+    /*let allEntries = this.entries(copyArray);
     allEntries.forEach((element) => {
       this.set(element[0], element[1]);
-    });
+    });*/
   }
 
   hash(key) {
@@ -74,7 +83,7 @@ class HashMap {
     let index = this.hash(key);
     this.outOfBoundError(index);
     let linkList = this.bucket[index];
-    linkList.remove(key);
+    return linkList.remove(key);
   }
 
   length() {
